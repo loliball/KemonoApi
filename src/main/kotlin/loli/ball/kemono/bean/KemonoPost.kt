@@ -34,8 +34,8 @@ data class Attachment(
     val name: String,
     val path: String    // 斜杠开头
 ) {
-    val thumbnail: String = "$KEMONO_BASE_URL/thumbnail$path"
-    val fullImage: String = "$KEMONO_BASE_URL$path"
+    val thumbnail: String = "$KEMONO_BASE_URL/thumbnail/data$path"
+    val fullImage: String = "$KEMONO_BASE_URL/data$path"
 }
 
 object AttachmentSerializer : KSerializer<Attachment?> {
