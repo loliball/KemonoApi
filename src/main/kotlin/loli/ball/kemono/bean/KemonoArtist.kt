@@ -13,8 +13,8 @@ data class KemonoArtist(
     val name: String,
     val service: String
 ) {
-    val avatar = "$KEMONO_BASE_URL/banners/$service/$id"
-    val banner = "$KEMONO_BASE_URL/icons/$service/$id"
+    val avatar = "$KEMONO_BASE_URL/icons/$service/$id"
+    val banner = "$KEMONO_BASE_URL/banners/$service/$id"
 }
 
 @Serializable

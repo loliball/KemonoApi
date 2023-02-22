@@ -6,6 +6,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import loli.ball.kemono.bean.Account
 import loli.ball.kemono.bean.KemonoArtistList
+import loli.ball.kemono.bean.KemonoComment
 import loli.ball.kemono.bean.KemonoPostList
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -168,6 +169,28 @@ object KemonoApi {
     ): Result<KemonoPostList> {
         val url = "$KEMONO_BASE_URL/api/$service/user/$artistId/post/$postId"
         return request(client, url, cookie, noCache)
+    }
+
+    fun postComments(
+        service: String,
+        artistId: String,
+        postId: String,
+        cookie: String? = null,
+        noCache: Boolean = false
+    ): Result<List<KemonoComment>> {
+        val request = Request.Builder()
+            .url("$KEMONO_BASE_URL/$service/user/$artistId/post/$postId")
+            .also {
+                if (noCache) it.cacheControl(CacheControl.FORCE_NETWORK)
+                if (cookie != null) it.addHeader("cookie", cookie)
+            }
+            .build()
+        return runCatching {
+            val response = client.newCall(request).execute()
+            val bodyString = response.body!!.string()
+            check(response.code == 200) { bodyString }
+            KemonoComments.parsePost(bodyString)
+        }
     }
 
     private inline fun <reified R> request(
