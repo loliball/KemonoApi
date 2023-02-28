@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package loli.ball.kemono.bean
 
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -27,7 +28,9 @@ data class KemonoPost(
     val shared_file: Boolean,           //未知 通常是false
     val title: String,                  //作品的标题
     val user: String,                   //作者id
-)
+) {
+    val kemono = "$KEMONO_BASE_URL/$service/user/$user/post/$id"
+}
 
 @Serializable
 data class Attachment(

@@ -15,6 +15,22 @@ data class KemonoArtist(
 ) {
     val avatar = "$KEMONO_BASE_URL/icons/$service/$id"
     val banner = "$KEMONO_BASE_URL/banners/$service/$id"
+    val kemono = "$KEMONO_BASE_URL/$service/user/$id"
+    val origin by lazy {
+        val artistService = ArtistService.values().find { it.name == service } ?: return@lazy ""
+        val url = artistService.url
+        when (artistService) {
+            ArtistService.patreon -> "$url/user?u=$id"
+            ArtistService.fanbox -> "$url/fanbox/creator/$id"
+            ArtistService.gumroad -> "$url/$id"
+            ArtistService.subscribestar -> "$url/$id"
+            ArtistService.dlsite -> "$url/home/circle/profile/=/maker_id/$id"
+            ArtistService.discord -> "$url/$id"
+            ArtistService.fantia -> "$url/fanclubs/$id"
+            ArtistService.boosty -> "$url/$id"
+            ArtistService.afdian -> "$url/a/$id"
+        }
+    }
 }
 
 @Serializable
