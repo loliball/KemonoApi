@@ -7,5 +7,7 @@ enum class ArtistService(val url: String) {
     subscribestar("https://www.subscribestar.com"),
     gumroad("https://gumroad.com"),
     fanbox("https://www.fanbox.cc"),
-    patreon("https://www.patreon.com")
+    patreon("https://www.patreon.com"),
+    boosty("https://boosty.to"),
+    afdian("https://afdian.net")
 }
