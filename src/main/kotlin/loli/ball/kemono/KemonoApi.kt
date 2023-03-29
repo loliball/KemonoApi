@@ -4,10 +4,7 @@ package loli.ball.kemono
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import loli.ball.kemono.bean.Account
-import loli.ball.kemono.bean.KemonoArtistList
-import loli.ball.kemono.bean.KemonoComment
-import loli.ball.kemono.bean.KemonoPostList
+import loli.ball.kemono.bean.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.internal.EMPTY_REQUEST
@@ -84,7 +81,7 @@ object KemonoApi {
 
     fun favoriteArtists(cookie: String, noCache: Boolean = false): Result<KemonoArtistList> {
         val url = "$KEMONO_BASE_URL/api/v1/account/favorites?type=artist"
-        return request(client, url, cookie, noCache)
+        return request<List<KemonoArtistFavorites>>(client, url, cookie, noCache)
     }
 
     fun favoritePosts(cookie: String, noCache: Boolean = false): Result<KemonoPostList> {
@@ -136,7 +133,7 @@ object KemonoApi {
 
     fun allArtist(cookie: String? = null, noCache: Boolean = false): Result<KemonoArtistList> {
         val url = "$KEMONO_BASE_URL/api/creators"
-        return request(client, url, cookie, noCache)
+        return request<List<KemonoArtistAll>>(client, url, cookie, noCache)
     }
 
 //    fun allPosts(

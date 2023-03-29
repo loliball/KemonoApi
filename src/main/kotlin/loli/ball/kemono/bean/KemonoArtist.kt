@@ -8,18 +8,20 @@ import loli.ball.kemono.KemonoApi.KEMONO_BASE_URL
 typealias KemonoArtistList = List<KemonoArtist>
 
 @Serializable
-data class KemonoArtist(
-    val id: String,
-    val name: String,
+sealed interface KemonoArtist {
+    val id: String
+    val name: String
     val service: String
-) {
-    val avatar = "$KEMONO_BASE_URL/icons/$service/$id"
-    val banner = "$KEMONO_BASE_URL/banners/$service/$id"
-    val kemono = "$KEMONO_BASE_URL/$service/user/$id"
-    val origin by lazy {
-        val artistService = ArtistService.values().find { it.name == service } ?: return@lazy ""
+}
+
+val KemonoArtist.avatar get() = "$KEMONO_BASE_URL/icons/$service/$id"
+val KemonoArtist.banner get() = "$KEMONO_BASE_URL/banners/$service/$id"
+val KemonoArtist.kemono get() = "$KEMONO_BASE_URL/$service/user/$id"
+val KemonoArtist.origin: String
+    get() {
+        val artistService = ArtistService.values().find { it.name == service } ?: return ""
         val url = artistService.url
-        when (artistService) {
+        return when (artistService) {
             ArtistService.patreon -> "$url/user?u=$id"
             ArtistService.fanbox -> "$url/fanbox/creator/$id"
             ArtistService.gumroad -> "$url/$id"
@@ -31,24 +33,23 @@ data class KemonoArtist(
             ArtistService.afdian -> "$url/a/$id"
         }
     }
-}
 
 @Serializable
 data class KemonoArtistAll(
     val favorited: Int = 0,
-    val id: String,
+    override val id: String,
     val indexed: Double,            //创建日期
-    val name: String,
-    val service: String,
+    override val name: String,
+    override val service: String,
     val updated: Double,            //更新日期
-)
+) : KemonoArtist
 
 @Serializable
 data class KemonoArtistFavorites(
     val faved_seq: Int,
-    val id: String,
+    override val id: String,
     val indexed: String,
-    val name: String,
-    val service: String,
+    override val name: String,
+    override val service: String,
     val updated: String
-)
+) : KemonoArtist
