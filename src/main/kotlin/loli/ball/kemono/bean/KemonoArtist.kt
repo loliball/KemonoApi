@@ -36,6 +36,13 @@ sealed class KemonoArtist {
 }
 
 @Serializable
+data class KemonoArtistData(
+    override val id: String,
+    override val name: String,
+    override val service: String,
+) : KemonoArtist()
+
+@Serializable
 data class KemonoArtistAll(
     val favorited: Int = 0,
     override val id: String,
