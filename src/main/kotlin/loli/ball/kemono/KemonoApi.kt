@@ -11,7 +11,11 @@ import okhttp3.internal.EMPTY_REQUEST
 
 object KemonoApi {
 
-    const val KEMONO_BASE_URL = "https://kemono.party"
+    val KEMONO_BASE_URLS = listOf(
+        "https://kemono.party",
+        "https://kemono.su"
+    )
+    var KEMONO_BASE_URL = KEMONO_BASE_URLS[0]
 
     var client: OkHttpClient = OkHttpClient()
 
