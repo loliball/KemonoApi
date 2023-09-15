@@ -179,19 +179,56 @@ object KemonoApi {
         cookie: String? = null,
         noCache: Boolean = false
     ): Result<List<KemonoComment>> {
+        return runCatching {
+            val url = "$KEMONO_BASE_URL/$service/user/$artistId/post/$postId"
+            val bodyString = requestGet(client, url, cookie, noCache)
+            KemonoComments.parsePost(bodyString)
+        }
+    }
+
+    fun artistFancards(
+        service: String,
+        artistId: String,
+        cookie: String? = null,
+        noCache: Boolean = false
+    ): Result<List<KemonoFancard>> {
+        return runCatching {
+            val url = "$KEMONO_BASE_URL/$service/user/$artistId/fancards"
+            val bodyString = requestGet(client, url, cookie, noCache)
+            KemonoArtistExtends.parseFancards(bodyString)
+        }
+    }
+
+    fun artistAnnouncements(
+        service: String,
+        artistId: String,
+        cookie: String? = null,
+        noCache: Boolean = false
+    ): Result<List<KemonoAnnouncement>> {
+        return runCatching {
+            val url = "$KEMONO_BASE_URL/$service/user/$artistId/announcements"
+            val bodyString = requestGet(client, url, cookie, noCache)
+            KemonoArtistExtends.parseAnnouncements(bodyString)
+        }
+    }
+
+    private fun requestGet(
+        client: OkHttpClient,
+        url: String,
+        cookie: String?,
+        noCache: Boolean
+    ): String {
         val request = Request.Builder()
-            .url("$KEMONO_BASE_URL/$service/user/$artistId/post/$postId")
+            .url(url)
             .also {
                 if (noCache) it.cacheControl(CacheControl.FORCE_NETWORK)
                 if (cookie != null) it.addHeader("cookie", cookie)
             }
             .build()
-        return runCatching {
-            val response = client.newCall(request).execute()
-            val bodyString = response.body!!.string()
-            check(response.code == 200) { bodyString }
-            KemonoComments.parsePost(bodyString)
-        }
+        val response = client.newCall(request).execute()
+        val bodyString = response.body!!.string()
+        check(response.code == 200) { bodyString }
+        return bodyString
     }
 
     private inline fun <reified R> request(
@@ -200,17 +237,8 @@ object KemonoApi {
         cookie: String?,
         noCache: Boolean
     ): Result<R> {
-        val request = Request.Builder()
-            .url(url)
-            .also {
-                if (noCache) it.cacheControl(CacheControl.FORCE_NETWORK)
-                if (cookie != null) it.addHeader("cookie", cookie)
-            }
-            .build()
         return runCatching {
-            val response = client.newCall(request).execute()
-            val bodyString = response.body!!.string()
-            check(response.code == 200) { bodyString }
+            val bodyString = requestGet(client, url, cookie, noCache)
             json.decodeFromString(bodyString)
         }
     }
