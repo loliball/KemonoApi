@@ -212,6 +212,19 @@ object KemonoApi {
         }
     }
 
+    fun artistDms(
+        service: String,
+        artistId: String,
+        cookie: String? = null,
+        noCache: Boolean = false
+    ): Result<List<KemonoAnnouncement>> {
+        return runCatching {
+            val url = "$KEMONO_BASE_URL/$service/user/$artistId/dms"
+            val bodyString = requestGet(client, url, cookie, noCache)
+            KemonoArtistExtends.parseAnnouncements(bodyString)
+        }
+    }
+
     private fun requestGet(
         client: OkHttpClient,
         url: String,

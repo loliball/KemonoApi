@@ -13,8 +13,7 @@ object KemonoArtistExtends {
         doc.outputSettings(Document.OutputSettings().prettyPrint(false))
 
         val output = mutableListOf<KemonoFancard>()
-        val group = doc.getElementById("fancard-container")
-        group?.children()?.forEach {
+        doc.getElementsByClass("fancard__file").forEach {
             val time = it.getElementsByTag("span").first()!!.attr("title")
             val imageUrl = it.getElementsByTag("img").first()!!.attr("src")
             val imageHash = imageUrl.substringAfter("/data")
