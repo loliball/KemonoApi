@@ -136,7 +136,7 @@ object KemonoApi {
 
 
     fun allArtist(cookie: String? = null, noCache: Boolean = false): Result<KemonoArtistList> {
-        val url = "$KEMONO_BASE_URL/api/creators"
+        val url = "$KEMONO_BASE_URL/api/v1/creators.txt"
         return request<List<KemonoArtistAll>>(client, url, cookie, noCache)
     }
 
@@ -157,7 +157,7 @@ object KemonoApi {
         cookie: String? = null,
         noCache: Boolean = false
     ): Result<KemonoPostList> {
-        val url = "$KEMONO_BASE_URL/api/$service/user/$artistId?o=$offset"
+        val url = "$KEMONO_BASE_URL/api/v1/$service/user/$artistId?o=$offset"
         return request(client, url, cookie, noCache)
     }
 
@@ -167,8 +167,8 @@ object KemonoApi {
         postId: String,
         cookie: String? = null,
         noCache: Boolean = false
-    ): Result<KemonoPostList> {
-        val url = "$KEMONO_BASE_URL/api/$service/user/$artistId/post/$postId"
+    ): Result<KemonoPost> {
+        val url = "$KEMONO_BASE_URL/api/v1/$service/user/$artistId/post/$postId"
         return request(client, url, cookie, noCache)
     }
 
@@ -252,6 +252,7 @@ object KemonoApi {
     ): Result<R> {
         return runCatching {
             val bodyString = requestGet(client, url, cookie, noCache)
+            println(bodyString)
             json.decodeFromString(bodyString)
         }
     }
