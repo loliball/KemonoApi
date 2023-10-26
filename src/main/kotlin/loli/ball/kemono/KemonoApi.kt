@@ -8,6 +8,7 @@ import loli.ball.kemono.bean.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.internal.EMPTY_REQUEST
+import org.jsoup.Jsoup
 
 object KemonoApi {
 
@@ -78,7 +79,11 @@ object KemonoApi {
             val time = cookie1.expiresAt
             Account(username, password, cook, time)
         } else {
-            null
+            if (response.code == 200) {
+                val doc = Jsoup.parse(response.body!!.string())
+                val msg = doc.getElementsByClass("flash_messages").text()
+                error(msg)
+            } else null
         }
     }
 
