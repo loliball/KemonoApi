@@ -12,7 +12,6 @@ import okhttp3.internal.EMPTY_REQUEST
 object KemonoApi {
 
     val KEMONO_BASE_URLS = listOf(
-        "https://kemono.party",
         "https://kemono.su"
     )
     var KEMONO_BASE_URL = KEMONO_BASE_URLS[0]
@@ -252,7 +251,6 @@ object KemonoApi {
     ): Result<R> {
         return runCatching {
             val bodyString = requestGet(client, url, cookie, noCache)
-            println(bodyString)
             json.decodeFromString(bodyString)
         }
     }
