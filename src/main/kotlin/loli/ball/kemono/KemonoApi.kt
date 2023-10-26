@@ -8,6 +8,7 @@ import loli.ball.kemono.bean.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.internal.EMPTY_REQUEST
+import okhttp3.internal.closeQuietly
 import org.jsoup.Jsoup
 
 object KemonoApi {
@@ -39,7 +40,9 @@ object KemonoApi {
             .build()
         val response = noRedirectsClient.newCall(request).execute()
         val cookie = response.header("set-cookie")
-        return when (response.header("location")) {
+        val redirect = response.header("location")
+        response.close()
+        return when (redirect) {
             "/artists?logged_in=yes" -> {
                 val cookie1 = Cookie.parse(
                     KEMONO_BASE_URL.toHttpUrl(),
@@ -68,9 +71,11 @@ object KemonoApi {
             .build()
         val response = noRedirectsClient.newCall(request).execute()
         val cookie = response.header("set-cookie")
-        return if (response.code == 302 &&
-            response.header("location") == "/artists?logged_in=yes"
-        ) {
+        val code = response.code
+        val redirect = response.header("location")
+        val bodyString = response.body?.string()
+        response.close()
+        return if (code == 302 && redirect == "/artists?logged_in=yes") {
             val cookie1 = Cookie.parse(
                 KEMONO_BASE_URL.toHttpUrl(),
                 cookie.orEmpty()
@@ -79,8 +84,8 @@ object KemonoApi {
             val time = cookie1.expiresAt
             Account(username, password, cook, time)
         } else {
-            if (response.code == 200) {
-                val doc = Jsoup.parse(response.body!!.string())
+            if (code == 200 && bodyString != null) {
+                val doc = Jsoup.parse(bodyString)
                 val msg = doc.getElementsByClass("flash_messages").text()
                 error(msg)
             } else null
@@ -103,7 +108,7 @@ object KemonoApi {
             .addHeader("cookie", cookie)
             .post(EMPTY_REQUEST)
             .build()
-        noRedirectsClient.newCall(request).execute()
+        noRedirectsClient.newCall(request).execute().closeQuietly()
     }
 
     fun unFavoriteArtist(cookie: String, service: String, artistId: String) {
@@ -112,7 +117,7 @@ object KemonoApi {
             .addHeader("cookie", cookie)
             .delete()
             .build()
-        noRedirectsClient.newCall(request).execute()
+        noRedirectsClient.newCall(request).execute().closeQuietly()
     }
 
     fun favoritePost(cookie: String, service: String, artistId: String, postId: String) {
@@ -121,7 +126,7 @@ object KemonoApi {
             .addHeader("cookie", cookie)
             .post(EMPTY_REQUEST)
             .build()
-        noRedirectsClient.newCall(request).execute()
+        noRedirectsClient.newCall(request).execute().closeQuietly()
     }
 
     fun unFavoritePost(cookie: String, service: String, artistId: String, postId: String) {
@@ -130,7 +135,7 @@ object KemonoApi {
             .addHeader("cookie", cookie)
             .delete()
             .build()
-        noRedirectsClient.newCall(request).execute()
+        noRedirectsClient.newCall(request).execute().closeQuietly()
     }
 
 
@@ -244,7 +249,9 @@ object KemonoApi {
             .build()
         val response = client.newCall(request).execute()
         val bodyString = response.body!!.string()
-        check(response.code == 200) { bodyString }
+        val code = response.code
+        response.close()
+        check(code == 200) { bodyString }
         return bodyString
     }
 
