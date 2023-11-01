@@ -102,40 +102,52 @@ object KemonoApi {
         return request(client, url, cookie, noCache)
     }
 
-    fun favoriteArtist(cookie: String, service: String, artistId: String) {
+    fun favoriteArtist(cookie: String, service: String, artistId: String): Boolean {
         val request = Request.Builder()
-            .url("$KEMONO_BASE_URL/favorites/artist/$service/$artistId")
+            .url("$KEMONO_BASE_URL/api/v1/favorites/creator/$service/$artistId")
             .addHeader("cookie", cookie)
             .post(EMPTY_REQUEST)
             .build()
-        noRedirectsClient.newCall(request).execute().closeQuietly()
+        return noRedirectsClient.newCall(request).execute().let {
+            it.closeQuietly()
+            it.code == 200
+        }
     }
 
-    fun unFavoriteArtist(cookie: String, service: String, artistId: String) {
+    fun unFavoriteArtist(cookie: String, service: String, artistId: String): Boolean {
         val request = Request.Builder()
-            .url("$KEMONO_BASE_URL/favorites/artist/$service/$artistId")
+            .url("$KEMONO_BASE_URL/api/v1/favorites/creator/$service/$artistId")
             .addHeader("cookie", cookie)
             .delete()
             .build()
-        noRedirectsClient.newCall(request).execute().closeQuietly()
+        return noRedirectsClient.newCall(request).execute().let {
+            it.closeQuietly()
+            it.code == 200
+        }
     }
 
-    fun favoritePost(cookie: String, service: String, artistId: String, postId: String) {
+    fun favoritePost(cookie: String, service: String, artistId: String, postId: String): Boolean {
         val request = Request.Builder()
-            .url("$KEMONO_BASE_URL/favorites/post/$service/$artistId/$postId")
+            .url("$KEMONO_BASE_URL/api/v1/favorites/post/$service/$artistId/$postId")
             .addHeader("cookie", cookie)
             .post(EMPTY_REQUEST)
             .build()
-        noRedirectsClient.newCall(request).execute().closeQuietly()
+        return noRedirectsClient.newCall(request).execute().let {
+            it.closeQuietly()
+            it.code == 200
+        }
     }
 
-    fun unFavoritePost(cookie: String, service: String, artistId: String, postId: String) {
+    fun unFavoritePost(cookie: String, service: String, artistId: String, postId: String): Boolean {
         val request = Request.Builder()
-            .url("$KEMONO_BASE_URL/favorites/post/$service/$artistId/$postId")
+            .url("$KEMONO_BASE_URL/api/v1/favorites/post/$service/$artistId/$postId")
             .addHeader("cookie", cookie)
             .delete()
             .build()
-        noRedirectsClient.newCall(request).execute().closeQuietly()
+        return noRedirectsClient.newCall(request).execute().let {
+            it.closeQuietly()
+            it.code == 200
+        }
     }
 
 
