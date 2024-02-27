@@ -42,20 +42,16 @@ object KemonoApi {
         val cookie = response.header("set-cookie")
         val redirect = response.header("location")
         response.close()
-        return when (redirect) {
-            "/artists?logged_in=yes" -> {
-                val cookie1 = Cookie.parse(
-                    KEMONO_BASE_URL.toHttpUrl(),
-                    cookie.orEmpty()
-                ) ?: return null
-                val cook = "${cookie1.name}=${cookie1.value}"
-                val time = cookie1.expiresAt
-                Account(username, password, cook, time)
-            }
-
-            "/account/login" -> null
-            else -> null
+        if (redirect?.contains("logged_in=yes") == true) {
+            val cookie1 = Cookie.parse(
+                KEMONO_BASE_URL.toHttpUrl(),
+                cookie.orEmpty()
+            ) ?: return null
+            val cook = "${cookie1.name}=${cookie1.value}"
+            val time = cookie1.expiresAt
+            return Account(username, password, cook, time)
         }
+        return null
     }
 
     fun register(username: String, password: String): Account? {
@@ -75,7 +71,7 @@ object KemonoApi {
         val redirect = response.header("location")
         val bodyString = response.body?.string()
         response.close()
-        return if (code == 302 && redirect == "/artists?logged_in=yes") {
+        return if (code == 302 && redirect?.contains("logged_in=yes") == true) {
             val cookie1 = Cookie.parse(
                 KEMONO_BASE_URL.toHttpUrl(),
                 cookie.orEmpty()
